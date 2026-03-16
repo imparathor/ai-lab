@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(python:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:developer.rhino3d.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.shapediver.com)",
+      "Bash(find:*)",
+      "Bash(start:*)",
+      "WebFetch(domain:skills.sh)",
+      "WebFetch(domain:claude.ai)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:r3f.docs.pmnd.rs)",
+      "WebFetch(domain:discoverthreejs.com)",
+      "WebFetch(domain:3d.bk.tudelft.nl)",
+      "WebFetch(domain:power.larc.nasa.gov)",
+      "WebFetch(domain:mapscaping.com)",
+      "WebFetch(domain:threejs-journey.com)"
+    ]
+  }
+}

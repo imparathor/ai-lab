@@ -2,62 +2,108 @@
 
 **A hands-on workshop for InfAU - 2 hours**
 
-Build an interactive web application using AI-assisted coding. No web development experience needed.
+Build an interactive isovist web application using AI-assisted coding. No web development experience needed.
+
+>  You can follow this guide self-paced from anywhere. If a file path doesn't resolve locally, grab the data files directly from GitHub: [workshop/data/weimar/](https://github.com/bauhaus-infau/ai-lab/tree/main/workshop/data/weimar)
 
 ---
 
 ## Part 0: Pre-workshop Setup
 
-> **Send this to participants 1 day before the workshop.**
-
 To hit the ground running, please complete these steps before we meet:
 
-1. **Install VS Code** - [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
-2. **Sign up for Claude** ($20/mo Pro or $100/mo Max) - [https://claude.ai/pricing](https://claude.ai/pricing)
-3. **Create a GitHub account** (free) - [https://github.com/signup](https://github.com/signup)
-   The instructor will send you an org invitation - accept it before the session.
+1. **Install VS Code** - [https://code.visualstudio.com/download](https://code.visualstudio.com/download) (for viewing and editing files)
+2. **Install Node.js** (LTS version) - [https://nodejs.org/](https://nodejs.org/)
+3. **Install Claude Code** - Open a terminal and run: `npm install -g @anthropic-ai/claude-code`
+4. **Sign up for Claude** ($20/mo Pro or $100/mo Max) - [https://claude.ai/pricing](https://claude.ai/pricing)
+5. **Create a GitHub account** (free) - [https://github.com/signup](https://github.com/signup)
 
-That's it. We'll do the rest together.
+That's it. We'll do the rest together. If you're joining remotely, continue to Part 1 — each step is self-contained.
 
 ---
 
 ## Part 1: Setup (20 min)
 
-### Install the Claude Code Extension
+### Start Claude Code
 
 ```
-1. Open VS Code
-2. Press Ctrl+Shift+X → search "Claude Code" → Install
-3. Click the ✱ spark icon (top-right of editor) → Sign in with your Claude account
-4. You're ready.
+1. Open a terminal (PowerShell, Command Prompt, or VS Code's built-in terminal)
+2. cd to the folder where you want to create your project
+3. Run: claude
+4. Sign in with your Claude account when prompted
 ```
 
-### Create a Project Folder
+You'll see a `>` prompt — this is where you talk to Claude. It reads your files, writes code, and runs commands. You approve or reject each action.
 
-Ask Claude:
+### Set Up Playwright MCP (Optional)
 
-```
-Create a new folder called my-workshop-project and open it as a VS Code workspace.
-```
-
-### Install Live Server
+This lets Claude see and interact with your browser — useful for debugging visual issues. Run this in a separate terminal (not inside Claude Code):
 
 ```
-Install the "Live Server" extension in VS Code.
+claude mcp add playwright npx @anthropic-ai/mcp-server-playwright
 ```
 
-This gives you a local web server with auto-reload - when you save a file, the browser refreshes automatically. Right-click any `.html` file → **Open with Live Server** to use it.
+Then restart Claude Code (`/quit` and run `claude` again) to pick up the new MCP server.
+
+### Create the Project + Build the Isovist App
+
+This single prompt creates the project from scratch and builds the full isovist app. Copy the entire block into Claude Code:
+
+> The full prompt is also available as a printable card in [`workshop/prompts/isovist-starter.md`](prompts/isovist-starter.md).
+
+```
+Create a new Vite + React + TypeScript project called isovist-app in this folder.
+Install three, @types/three, @react-three/fiber, @react-three/drei, and Tailwind CSS.
+
+Copy the GeoJSON files from ../ai-lab/workshop/data/weimar/ into the project's
+public/ folder: weimar-buildings-3d.geojson and weimar-streets.geojson.
+(If that path doesn't work, look for a nearby ai-lab folder or download them from
+the GitHub repo: https://github.com/bauhaus-infau/ai-lab/tree/main/workshop/data/weimar)
+
+Then build an isovist analysis app using React and Three.js (react-three-fiber).
+Use the two GeoJSON files in the public/ folder:
+
+- weimar-buildings-3d.geojson — 3D building geometry (faces with z-coordinates) plus "Height" property
+- weimar-streets.geojson — street center lines with "length" property
+
+IMPORTANT: The coordinates are from Rhino's local coordinate system (exported via Heron),
+NOT real-world lat/lon. They are small decimal numbers near (0, 0). Do NOT use a map
+library like Leaflet. Use Three.js and scale the coordinates so the scene is a reasonable
+size (e.g., multiply by a large factor or normalize to fit a ~500-unit bounding box).
+
+The app should have:
+1. 3D buildings rendered from the GeoJSON faces (the geometry already includes z-coordinates
+   for top and bottom edges — build meshes from these faces rather than extruding flat footprints)
+2. Street network rendered as lines on the ground plane
+3. OrbitControls for camera navigation (rotate, zoom, pan)
+4. A ground plane underneath the buildings
+5. An isovist visualization from a single viewpoint:
+   - Cast rays from the viewpoint in all directions on the 2D ground plane
+   - Stop each ray when it hits a building footprint (2D polygon edge) or reaches max radius
+   - Draw the resulting isovist polygon as a semi-transparent colored shape on the ground
+6. A draggable viewpoint marker (click on the ground to move it)
+7. A radius slider (50–500 units) that controls the maximum isovist distance
+8. Display the isovist area as a number on screen
+
+Use a dark background, subtle grid on the ground plane, and professional styling.
+Use Tailwind CSS for the UI controls.
+
+Start the dev server when done.
+```
+
+Vite gives you a local dev server with **hot reload** — changes appear instantly in the browser without refreshing. This prompt will take a few minutes — Claude needs to create the project, install dependencies, and write all the code.
 
 ### Sanity Check
 
-Type this prompt into Claude (replace with your name):
+Once the dev server is running, open [http://localhost:5173](http://localhost:5173) in your browser. You should see:
 
-```
-Create a file called hello.html with a page that says "Hello from [your name]!"
-with a nice gradient background. Open it with Live Server.
-```
+- A 3D city model with extruded buildings
+- Streets drawn on the ground
+- A colored isovist polygon spreading from a viewpoint
+- Ability to click to move the viewpoint
+- A radius slider that changes the isovist size
 
-You should see a styled page open in your browser. If it works - you're all set.
+**Don't worry if it's not perfect** — if buildings look flat, the isovist doesn't appear, or controls feel off, just describe the problem to Claude and ask it to fix it. Paste a screenshot or error message so Claude has full context.
 
 ---
 
@@ -82,37 +128,19 @@ You should see a styled page open in your browser. If it works - you're all set.
 
 These optional tips help Claude produce more polished results. Skim now, refer back later.
 
-### A) Scaffolding - Start with a Real App
-
-The starter prompts create plain HTML files - that's perfectly fine. But if you want a more professional setup with a component library and hot reload, ask Claude to scaffold a project first:
-
-```
-Create a new Vite + React + TypeScript project in this folder. Install
-shadcn/ui and configure it with the default theme. Set up Tailwind CSS.
-Initialize the project and start the dev server.
-```
-
-This gives you:
-
-- **Hot reload** - see changes instantly without refreshing
-- **shadcn/ui** - a library of polished, accessible UI components
-- **Tailwind CSS** - utility classes for fast, consistent styling
-
-Then use the project's starter prompt as a follow-up. This is **completely optional** - plain HTML works great for the workshop.
-
-### B) Skills - Claude's Hidden Superpowers
+### A) Skills - Claude's Hidden Superpowers
 
 Type a **slash command** before your prompt to activate a specialized mode:
 
 ```
 /frontend-design
 
-Create a dashboard that shows solar analysis results with charts and a map
+Create a dashboard that shows isovist analysis results with charts and a 3D view
 ```
 
 The `/frontend-design` skill shifts Claude into a design-focused mode that produces **distinctive, production-grade UIs** instead of generic-looking ones. It's the single biggest quality upgrade you can use.
 
-### C) Prompt Tricks That Make a Difference
+### B) Prompt Tricks That Make a Difference
 
 Drop these phrases into any prompt to improve the output:
 
@@ -131,103 +159,36 @@ Drop these phrases into any prompt to improve the output:
 
 ---
 
-## Part 3: Pick Your Project (75 min)
+## Part 3: Make It Your Own (75 min)
 
-Choose one project below. Each includes a starter prompt and follow-up ideas.
+Your baseline isovist app is running from Part 1. Now the fun part — pick any extensions that interest you and ask Claude to add them. Here are ideas grouped by category:
 
-Copy the starter prompt into Claude, watch it build, then try the next steps one at a time.
+**UI & Styling:**
 
-> Prompt cards for printing/copy-paste are in [`workshop/prompts/`](prompts/).
+- *"Add a dark sidebar that shows isovist statistics (area, perimeter, number of visible buildings)"*
+- *"Use a gradient color for the isovist polygon based on distance from viewpoint"*
+- *"Make the layout responsive with the controls in a collapsible panel"*
+- *"Add a minimap in the corner showing a top-down 2D view"*
 
----
+**Analysis & Data:**
 
-### Project A: Interactive 3D City Viewer
+- *"Color each building by whether it's visible from the viewpoint — orange if visible, gray if hidden"*
+- *"Show a percentage: how many buildings are visible out of total"*
+- *"Calculate and display the compactness ratio (area / perimeter²) of the isovist"*
 
-**You need:** weimar data in your project folder (provided in `workshop/data/weimar/`).
+**Interaction:**
 
-**Starter prompt:**
+- *"Let me right-click to place a second viewpoint and compare two isovists side by side"*
+- *"Add an 'animate' button that moves the viewpoint along the nearest street"*
+- *"Add a heatmap mode that shows visibility intensity across a grid of sample points"*
 
-```
-Create a web page that loads the 3D model from city-model.glb using Three.js.
-Add orbit controls so I can rotate and zoom. Add a light gray ground plane.
-Use a dark background. Make it fullscreen.
-```
+**Advanced:**
 
-**Next steps:**
+- *"Show how the isovist changes along a path — let me draw a path and animate the viewpoint along it"*
+- *"Add a 3D isovist volume (extrude the 2D isovist polygon upward to the viewpoint height)"*
+- *"Generate a visibility graph: connect all pairs of points that can see each other"*
 
-1. *"Add raycasting so when I click a building it highlights in orange and shows its name"*
-2. *"Add a sidebar panel that shows building properties when selected"*
-3. *"Add a minimap in the corner showing a top-down view"*
-
----
-
-### Project B: Solar Position Dashboard
-
-**You need:** No data file - everything is calculated.
-
-**Starter prompt:**
-
-```
-Create a web page with a solar position calculator. Show a sun path diagram
-(stereographic projection) for latitude 50.98, longitude 11.33 (Weimar).
-Add a date picker and time slider. Show the current sun azimuth and altitude.
-Draw it with SVG. Make it look professional with a dark theme.
-```
-
-**Next steps:**
-
-1. *"Add a 2D map view next to the sun path diagram showing shadow direction as an arrow"*
-2. *"Load weimar-buildings.geojson and show approximate shadow projections based on building heights"*
-3. *"Add an animation button that cycles through the hours of the day"*
-
----
-
-### Project C: Evolutionary Algorithm Playground
-
-**You need:** No data file - everything is procedurally generated.
-
-**Starter prompt:**
-
-```
-Create a web page that runs a genetic algorithm to pack colored rectangles
-into a 800x600 canvas with minimal overlap and wasted space. Show the
-current best layout animated in real-time. Display generation count and
-fitness score. Add start/stop/reset buttons.
-```
-
-**Next steps:**
-
-1. *"Add a settings panel to adjust population size, mutation rate, and crossover rate"*
-2. *"Show a fitness-over-time chart next to the canvas using Chart.js"*
-3. *"Add a second objective: minimize total perimeter, and show a Pareto front"*
-
----
-
-### Project D: Free Topic
-
-**Build anything you want.** This is the open-ended option — bring your own idea, your own data, or just experiment.
-
-**How to start:** Describe what you want to Claude in plain language. A good starter prompt includes:
-
-1. What the page should do
-2. What it should look like
-3. What data it uses (if any)
-
-**Starter prompt template:**
-
-```
-Create a web page that [does what]. It should [look/feel like what].
-[Optional: It uses this data: ...]
-Make it fullscreen with a clean, modern design.
-```
-
-**Ideas if you need inspiration:**
-
-- A personal dashboard (weather, calendar, to-do list)
-- A data visualization of something you care about (bring a CSV or JSON file)
-- A tool for your daily workflow (unit converter, color palette generator, note-taking app)
-- A simple game (memory cards, quiz, reaction timer)
-- A portfolio page or interactive CV
+Mix and match, or come up with your own ideas. The goal is to make something you find interesting.
 
 ---
 
@@ -241,41 +202,42 @@ Everyone shows their screen for 1–2 minutes. No slides needed - just show what
 
 Let's put your project online so you can share it with a link.
 
-Your app will be published at `https://bauhaus-infau.github.io/ai-lab/<your-name>/`.
+### Step 1: Create a GitHub Repository
 
-### Step 1: Clone the shared repo
-
-```
-Clone the repository https://github.com/Bauhaus-InfAU/ai-lab into a new
-folder next to my project. Use HTTPS.
-```
-
-### Step 2: Copy your built files
-
-**If you built a plain HTML project:**
+Ask Claude:
 
 ```
-Copy all files from my project folder into ai-lab/results/<your-name>/
-(replace <your-name> with your actual first name, lowercase, no spaces).
+Create a new GitHub repo called isovist-<your-name> under the bauhaus-infau
+organization and push my code to it.
 ```
 
-**If you used Vite + React:**
+Claude will create the repo on GitHub and push your files. If it asks you to authenticate with `gh auth login`, follow the prompts.
+
+### Step 2: Enable GitHub Pages
+
+1. Go to your repo on GitHub: `https://github.com/bauhaus-infau/isovist-<your-name>`
+2. Click **Settings** → **Pages** (in the left sidebar)
+3. Under **Source**, select **GitHub Actions**
+
+### Step 3: Add a Deploy Workflow
+
+Ask Claude:
 
 ```
-In my project, update vite.config.ts to set base: "./" so relative paths
-work on GitHub Pages. Then run npm run build. Copy the contents of the
-dist/ folder into ai-lab/results/<your-name>/.
+Update vite.config.ts to set base: "./" so relative paths work on GitHub Pages.
+Then create a GitHub Actions workflow that runs npm run build and deploys
+the dist/ folder to GitHub Pages. Put it in .github/workflows/deploy.yml.
 ```
 
-### Step 3: Create a branch, commit, and open a pull request
+### Step 4: Push and Go Live
 
 ```
-In the ai-lab folder: create a new branch called add-<your-name>, commit
-all the files in results/<your-name>/ with message "Add <your-name>'s
-project", push the branch, and open a pull request to main.
+Commit and push all changes including the workflow file.
 ```
 
-The instructor will merge your PR, and your app will be live within a minute.
+After the workflow runs (about 1 minute), your app will be live at:
+
+**`https://bauhaus-infau.github.io/isovist-<your-name>/`**
 
 ---
 

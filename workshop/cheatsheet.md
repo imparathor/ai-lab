@@ -1,13 +1,13 @@
-# Claude Code — Quick Reference
+# Claude Code - Quick Reference
 
 ## Giving Claude Context
 
 | Action | How |
 |--------|-----|
 | Reference a file | Type `@filename` in your prompt |
-| Reference specific code | Select text in the editor, then ask Claude about it |
+| Reference a folder | Type `@foldername` to give Claude the full directory |
 | Share an error | Copy-paste the error message into the chat |
-| Point to a folder | Type `@foldername` to give Claude the full directory |
+| Share a screenshot | Drag and drop an image into the terminal, or paste with `Ctrl+V` |
 
 ## Useful Phrases
 
@@ -39,21 +39,20 @@ Just type the command, press Enter, then type your prompt as usual.
 1. **Tell Claude what went wrong:** *"I see a blank page instead of the map"*
 2. **Ask Claude to explain:** *"explain what went wrong"*
 3. **Ask for a different approach:** *"try a different approach"*
-4. **Start fresh:** Press `Ctrl+N` for a new conversation (your files stay)
-5. **Ask the instructor** — no shame, this is what we're here for
+4. **Start fresh:** Type `/clear` for a new conversation (your files stay)
 
-## Keyboard Shortcuts
+## Keyboard Shortcuts (Terminal)
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Shift+X` | Open Extensions panel |
-| `Ctrl+N` | New conversation in Claude Code |
-| `Ctrl+Z` | Undo in editor |
-| `Ctrl+S` | Save file |
+| `Escape` | Interrupt Claude / cancel current action |
+| `Ctrl+C` | Exit Claude Code |
+| `/clear` | Clear conversation and start fresh |
+| `/quit` | Quit Claude Code |
 
 ## Remember
 
 - **Start simple, iterate.** Get the basic version working before adding features.
 - **One thing at a time.** Don't ask for 5 features in one prompt.
 - **Read what Claude writes.** You'll learn web development along the way.
-- **Approve or reject.** You're in control — Claude asks before changing files.
+- **Approve or reject.** You're in control - Claude asks before changing files.

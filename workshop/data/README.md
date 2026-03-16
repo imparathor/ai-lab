@@ -16,11 +16,11 @@ Street centerlines from the Weimar dataset. Available for any project that needs
 - **Properties:**
   - `length` (string) - segment length in meters
 
-### `weimar-buildings.geojson`
+### `weimar-buildings-3d.geojson`
 
-Building footprints for Projects A and C.
+3D building geometry — each feature's MultiPolygon contains vertical faces with z-coordinates (bottom edge at z=0, top edge at building height), ready to be rendered as meshes without extrusion.
 
-- **Format:** GeoJSON FeatureCollection (MultiPolygon)
+- **Format:** GeoJSON FeatureCollection (MultiPolygon with 3D coordinates)
 - **Properties:**
   - `Building ID` (string) - unique identifier
   - `Height` (string) - building height in meters
