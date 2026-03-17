@@ -45,6 +45,9 @@ jobs:
           mkdir -p _site
           if [ -d results ]; then cp -r results/. _site/; fi
           cp -r isovist-app/dist _site/isovist-app
+          if [ ! -f _site/index.html ]; then
+            echo '<meta http-equiv="refresh" content="0; url=isovist-app/">' > _site/index.html
+          fi
 
       - uses: actions/configure-pages@v5
 
