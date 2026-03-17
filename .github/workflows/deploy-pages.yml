@@ -1,9 +1,11 @@
-name: Deploy results to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-    paths: [results/**]
+    paths:
+      - results/**
+      - isovist-app/**
 
 permissions:
   contents: read
@@ -22,9 +24,32 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: isovist-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: isovist-app
+
+      - name: Build app
+        run: npm run build
+        working-directory: isovist-app
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r results/. _site/
+          cp -r isovist-app/dist _site/isovist-app
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: results
+          path: _site
+
       - id: deployment
         uses: actions/deploy-pages@v4
