@@ -43,7 +43,7 @@ jobs:
       - name: Assemble site
         run: |
           mkdir -p _site
-          cp -r results/. _site/
+          if [ -d results ]; then cp -r results/. _site/; fi
           cp -r isovist-app/dist _site/isovist-app
 
       - uses: actions/configure-pages@v5
